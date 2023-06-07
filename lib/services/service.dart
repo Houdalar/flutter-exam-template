@@ -80,4 +80,30 @@ class UserViewModel extends ChangeNotifier {
       throw Exception('Failed to fetch currencies');
     }
   }
+
+  static Future<bool> buyCurrency(
+    String currencyId,
+    double quantity,
+    String userId,
+  ) async {
+    final Map<String, dynamic> requestBody = {
+      'currencyId': currencyId,
+      'quantity': quantity,
+    };
+
+    final headers = {
+      'Content-Type': 'application/json',
+    };
+
+    final url = 'http://$baseUrl/api/currencies/$userId';
+
+    final response = await http.post(Uri.parse(url),
+        headers: headers, body: jsonEncode(requestBody));
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      throw Exception('Failed to buy currency');
+    }
+  }
 }

@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'dart:ffi';
 
+import 'package:exam/services/service.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -18,6 +20,8 @@ class _CurrencyDetailsScreenState extends State<CurrencyDetailsScreen> {
   late TextEditingController _amountController;
   late double _totalAmount;
   String? _userId;
+  bool _isBuying = false;
+  double quantity = 0;
 
   @override
   void initState() {
@@ -25,6 +29,77 @@ class _CurrencyDetailsScreenState extends State<CurrencyDetailsScreen> {
     _amountController = TextEditingController();
     _totalAmount = 0.0;
     _getUserIdFromSharedPreferences();
+  }
+
+  Future<void> _buyCurrency() async {
+    if (_userId == null) {
+      // Handle the case when user data is not available
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('User data not found'),
+            content: const Text('Please login to buy currency.'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  // Navigate to login screen or handle the login process
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+      return;
+    }
+
+    final String currencyId = widget.currency.id;
+    final double quantity = double.tryParse(_amountController.text) ?? 0.0;
+
+    try {
+      bool success =
+          await UserViewModel.buyCurrency(currencyId, quantity, _userId!);
+      if (success) {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: const Text('Congrats'),
+              content: Text('you bought $quantity of ${widget.currency.name}'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    // Additional actions if needed
+                  },
+                  child: const Text('Dismiss'),
+                ),
+              ],
+            );
+          },
+        );
+      }
+    } catch (e) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('warning'),
+            content: const Text('no available funds'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    }
   }
 
   @override
@@ -75,6 +150,7 @@ class _CurrencyDetailsScreenState extends State<CurrencyDetailsScreen> {
                       ),
                       onChanged: (value) {
                         setState(() {
+                          quantity = int.parse(value).toDouble();
                           _totalAmount = double.parse(value) *
                               double.parse(
                                   widget.currency.unitPrice.toString());
@@ -100,8 +176,8 @@ class _CurrencyDetailsScreenState extends State<CurrencyDetailsScreen> {
               Align(
                 alignment: Alignment.bottomRight,
                 child: ElevatedButton(
-                  onPressed: () {
-                    // Perform the buy action here
+                  onPressed: () async {
+                    await _buyCurrency();
                   },
                   style: ElevatedButton.styleFrom(
                     shape: RoundedRectangleBorder(

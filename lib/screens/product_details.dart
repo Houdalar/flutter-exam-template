@@ -4,55 +4,135 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/currencies.dart';
-import '../models/user.dart';
 
-class CurrencyDetailsScreen extends StatelessWidget {
+class CurrencyDetailsScreen extends StatefulWidget {
   final Currency currency;
 
   CurrencyDetailsScreen({required this.currency});
 
   @override
+  State<CurrencyDetailsScreen> createState() => _CurrencyDetailsScreenState();
+}
+
+class _CurrencyDetailsScreenState extends State<CurrencyDetailsScreen> {
+  late TextEditingController _amountController;
+  late double _totalAmount;
+  String? _userId;
+
+  @override
+  void initState() {
+    super.initState();
+    _amountController = TextEditingController();
+    _totalAmount = 0.0;
+    _getUserIdFromSharedPreferences();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Currency Details'),
+        title: Text(widget.currency.name),
       ),
-      body: FutureBuilder<String>(
-        future: _getUserFromSharedPreferences(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          }
-
-          if (snapshot.hasData) {
-            final user = snapshot.data!;
-
-            return Column(
-              children: [
-                // Display the necessary currency details and user code
-                Text('Currency: ${currency.name} (${currency.code})'),
-                Text('Unit Price: ${currency.unitPrice}'),
-                Text('User Code: ${user}'),
-                // Add the remaining UI elements as per your requirements
-              ],
-            );
-          }
-
-          // Handle the case when user data is not available
-          return Text('User data not found');
-        },
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              CircleAvatar(
+                backgroundImage: AssetImage('assets/${widget.currency.image}'),
+                radius: 100,
+              ),
+              const SizedBox(height: 30),
+              Text(
+                "${widget.currency.name}  [${widget.currency.code}]",
+                style: const TextStyle(
+                  fontSize: 30,
+                ),
+              ),
+              const SizedBox(height: 10),
+              Text("\$ ${widget.currency.unitPrice}"),
+              const SizedBox(height: 20),
+              Text(widget.currency.description),
+              const SizedBox(height: 30),
+              TextFormField(
+                decoration: InputDecoration(
+                  labelText: _userId ?? '',
+                  border: const OutlineInputBorder(),
+                ),
+                enabled: false,
+              ),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextFormField(
+                      controller: _amountController,
+                      decoration: const InputDecoration(
+                        labelText: 'Amount',
+                        border: OutlineInputBorder(),
+                      ),
+                      onChanged: (value) {
+                        setState(() {
+                          _totalAmount = double.parse(value) *
+                              double.parse(
+                                  widget.currency.unitPrice.toString());
+                        });
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 80),
+                  Expanded(
+                    child: TextFormField(
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                      ),
+                      enabled: false,
+                      controller: TextEditingController(
+                        text: _totalAmount.toStringAsFixed(2),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 80),
+              Align(
+                alignment: Alignment.bottomRight,
+                child: ElevatedButton(
+                  onPressed: () {
+                    // Perform the buy action here
+                  },
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: const [
+                      Icon(Icons.shopping_basket),
+                      SizedBox(width: 8.0),
+                      Text('Buy'),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
 
-  Future<String> _getUserFromSharedPreferences() async {
+  Future<void> _getUserIdFromSharedPreferences() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? userData = prefs.getString('user');
 
     if (userData != null) {
-      return userData;
+      setState(() {
+        _userId = userData;
+      });
     }
-
-    throw Exception('User data not found in shared preferences');
   }
 }

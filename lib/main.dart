@@ -1,8 +1,10 @@
 import 'package:exam/screens/buttom_home.dart';
 import 'package:exam/screens/home_tab.dart';
 import 'package:exam/screens/login_screen.dart';
+import 'package:exam/screens/product_details.dart';
 import 'package:flutter/material.dart';
 
+import 'models/currencies.dart';
 import 'models/user.dart';
 
 void main() {

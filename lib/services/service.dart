@@ -106,4 +106,19 @@ class UserViewModel extends ChangeNotifier {
       throw Exception('Failed to buy currency');
     }
   }
+
+  static Future<List<Map<String, dynamic>>> fetchCurrencyList() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final userId = prefs.getString('user');
+    final url = 'http://$baseUrl/api/currencies/liste/$userId';
+
+    final response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      return List<Map<String, dynamic>>.from(data);
+    } else {
+      throw Exception('Failed to fetch currency list');
+    }
+  }
 }

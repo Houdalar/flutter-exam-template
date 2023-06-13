@@ -1,4 +1,5 @@
 import 'package:exam/screens/buttom_home.dart';
+import 'package:exam/screens/gridList.dart';
 import 'package:exam/screens/home_tab.dart';
 import 'package:exam/screens/login_screen.dart';
 import 'package:exam/screens/product_details.dart';
@@ -29,6 +30,7 @@ class MyApp extends StatelessWidget {
           // return HomePage(user: user);
           return HomeTab(user: user);
         },
+        '/currencies': (context) => CurrencyListScreen()
       },
     );
   }

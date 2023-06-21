@@ -17,20 +17,9 @@ class _CurrencyListScreenState extends State<CurrencyListScreen> {
   @override
   void initState() {
     super.initState();
-    fetchCurrencyList();
   }
 
-  Future<void> fetchCurrencyList() async {
-    try {
-      final list = await UserViewModel.fetchCurrencyList();
-      setState(() {
-        currencyList = list;
-      });
-    } catch (e) {
-      print('Error: $e');
-      // Handle error
-    }
-  }
+  Future<void> fetchCurrencyList() async {}
 
   @override
   Widget build(BuildContext context) {
@@ -48,17 +37,6 @@ class _CurrencyListScreenState extends State<CurrencyListScreen> {
         itemCount: currencyList.length,
         itemBuilder: (context, index) {
           final currencyData = currencyList[index];
-          final currency = Currency(
-            id: currencyData['currency']['_id'],
-            image: currencyData['currency']['image'],
-            name: currencyData['currency']['name'],
-            unitPrice: currencyData['currency']['unitPrice'].toDouble(),
-            code: currencyData['currency']['code'],
-            description: currencyData['currency']['description'],
-          );
-          final String quantity = currencyData['quantity'].toString();
-
-          return GridItem(currency: currency, quantity: quantity);
         },
       ),
     );

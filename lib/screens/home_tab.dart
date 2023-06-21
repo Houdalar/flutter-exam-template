@@ -25,33 +25,6 @@ class HomeTab extends StatelessWidget {
             ],
           ),
         ),
-        drawer: Drawer(
-          child: ListView(
-            padding: EdgeInsets.zero,
-            children: [
-              const UserAccountsDrawerHeader(
-                accountName: null,
-                accountEmail: null,
-              ),
-              ListTile(
-                leading: const Icon(Icons.account_balance_wallet),
-                title: const Text('My Crypto-Currencies'),
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.pushNamed(context, '/currencies');
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.logout),
-                title: const Text('Logout'),
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.pushReplacementNamed(context, '/');
-                },
-              ),
-            ],
-          ),
-        ),
         body: TabBarView(
           children: [
             ListViewScreen(user: user),

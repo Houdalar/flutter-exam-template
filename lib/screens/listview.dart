@@ -23,43 +23,8 @@ class _ListViewScreenState extends State<ListViewScreen> {
     fetchCurrencies();
   }
 
-  Future<void> fetchCurrencies() async {
-    try {
-      List<Currency> currencies = await UserViewModel.fetchCurrencies();
-      setState(() {
-        items = currencies;
-      });
-    } catch (e) {
-      print('Error fetching currencies: $e');
-    }
-  }
+  Future<void> fetchCurrencies() async {}
 
   @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text(
-            'BALANCE\n \$${widget.user.balance.toStringAsFixed(2)}',
-            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-        ),
-        const SizedBox(height: 20),
-        const Text(
-          'popular coins',
-          style: TextStyle(fontSize: 15),
-        ),
-        Expanded(
-          child: ListView.builder(
-            itemCount: items.length,
-            itemBuilder: (context, index) {
-              return ListItem(currency: items[index]);
-            },
-          ),
-        ),
-      ],
-    );
-  }
+  Widget build(BuildContext context) {}
 }

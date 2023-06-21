@@ -15,20 +15,9 @@ class _LoginPageState extends State<LoginPage> {
 
   bool _isPasswordVisible = false;
 
-  void _login() {
-    if (_formKey.currentState!.validate()) {
-      UserViewModel.login(
-        _emailController.text,
-        _passwordController.text,
-        context,
-      );
-    }
-  }
+  void _login() {}
 
-  void _resetFields() {
-    _emailController.clear();
-    _passwordController.clear();
-  }
+  void _resetFields() {}
 
   @override
   Widget build(BuildContext context) {
@@ -71,15 +60,7 @@ class _LoginPageState extends State<LoginPage> {
                 TextFormField(
                   controller: _passwordController,
                   obscureText: !_isPasswordVisible,
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Please enter your password';
-                    }
-                    if (value.length < 3) {
-                      return 'Password must be at least 3 characters long';
-                    }
-                    return null;
-                  },
+                  validator: (value) {},
                   decoration: InputDecoration(
                     labelText: 'Password',
                     border: const OutlineInputBorder(),
@@ -99,7 +80,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 const SizedBox(height: 20),
                 ElevatedButton(
-                  onPressed: _login,
+                  onPressed: {},
                   child: const Text('Login'),
                 ),
                 const SizedBox(height: 10),
@@ -114,20 +95,6 @@ class _LoginPageState extends State<LoginPage> {
             ),
           ),
         ),
-      ),
-    );
-  }
-}
-
-class HomeScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Home Screen'),
-      ),
-      body: const Center(
-        child: Text('Welcome to the Home Screen!'),
       ),
     );
   }
